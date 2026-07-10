@@ -69,7 +69,7 @@
             <label for="music-volume">Volume</label>
             <input
               id="music-volume"
-              v-model="volume"
+              v-model.number="volume"
               class="music-player__volume"
               type="range"
               min="0"
@@ -311,13 +311,16 @@ onMounted(() => {
   bottom: 24px;
   z-index: 1000;
   width: min(420px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .music-player__shell {
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
   gap: 16px;
-  padding: 16px;
+  padding: clamp(12px, 3vw, 16px);
   border-radius: 24px;
   background:
     radial-gradient(circle at top left, rgba(255, 209, 102, 0.16), transparent 34%),
@@ -365,6 +368,7 @@ onMounted(() => {
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .music-player__content {
@@ -378,6 +382,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .music-player__eyebrow {
@@ -390,37 +395,44 @@ onMounted(() => {
 
 .music-player__meta h3 {
   margin: 0;
-  font-size: 18px;
-  line-height: 1.1;
+  font-size: clamp(15px, 4vw, 18px);
+  line-height: 1.2;
   letter-spacing: -0.03em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .music-player__artist {
   margin: 0;
   font-size: 13px;
   color: rgba(245, 247, 251, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .music-player__controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.04);
   color: #f5f7fb;
-  font-size: 15px;
   cursor: pointer;
+  flex-shrink: 0;
   transition:
     transform 0.18s ease,
     background-color 0.18s ease,
@@ -437,11 +449,7 @@ onMounted(() => {
 
 .music-player__material-icon {
   font-family: 'Material Symbols Outlined';
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   font-size: 18px;
   line-height: 1;
   display: block;
@@ -459,13 +467,13 @@ onMounted(() => {
 }
 
 .icon-btn--primary {
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
   border: none;
   background: linear-gradient(135deg, #ffd166, #5ce1e6);
   color: #0f1320;
   box-shadow: 0 12px 24px rgba(92, 225, 230, 0.2);
-  font-size: 18px;
 }
 
 .music-player__progress {
@@ -514,6 +522,7 @@ onMounted(() => {
 .music-player__volume {
   width: 100%;
   accent-color: #5ce1e6;
+  height: 24px;
 }
 
 .music-player__tracklist {
@@ -521,8 +530,9 @@ onMounted(() => {
   flex-direction: column;
   gap: 8px;
   max-height: 180px;
-  overflow: auto;
+  overflow-y: auto;
   padding-right: 2px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .music-player__track {
@@ -590,24 +600,91 @@ onMounted(() => {
   color: #5ce1e6;
 }
 
-@media (max-width: 560px) {
+/* ===== Mobile ===== */
+@media (max-width: 640px) {
   .music-player {
-    right: 16px;
-    bottom: 16px;
-    width: calc(100vw - 32px);
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    max-width: none;
   }
 
+  .music-player__shell {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .music-player__cover-wrap {
+    min-height: 0;
+    border-radius: 12px;
+  }
+
+  .music-player__badge {
+    display: none;
+  }
+
+  .music-player__content {
+    gap: 6px;
+  }
+
+  .music-player__eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  .music-player__meta h3 {
+    font-size: 14px;
+  }
+
+  .music-player__artist {
+    font-size: 11px;
+  }
+
+  .music-player__controls {
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+
+  .icon-btn--primary {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .music-player__transport-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .music-player__material-icon {
+    font-size: 14px;
+  }
+
+  .music-player__tracklist {
+    max-height: 30vh;
+  }
+}
+
+@media (max-width: 360px) {
   .music-player__shell {
     grid-template-columns: 1fr;
   }
 
   .music-player__cover-wrap {
-    min-height: 0;
-    aspect-ratio: 1;
+    aspect-ratio: 21 / 9;
   }
 
-  .music-player__controls {
-    justify-content: flex-start;
+  .music-player__badge {
+    display: inline-block;
   }
 }
 </style>
