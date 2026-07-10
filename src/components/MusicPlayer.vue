@@ -1,90 +1,161 @@
 <template>
-  <div class="player" :class="{ expanded: isExpanded }">
-    <div class="player-bar" @click="toggleExpand">
-      <div class="player-left">
-        <div class="vinyl" :class="{ spinning: isPlaying }">
-          <div class="vinyl-inner"></div>
-        </div>
-        <div class="track-info">
-          <div class="track-name">{{ currentTrack?.name }}</div>
-          <div class="track-artist">{{ currentTrack?.artist }}</div>
-        </div>
-      </div>
-      <div class="player-controls" @click.stop>
-        <button class="ctrl-btn" @click="prevTrack">⏮</button>
-        <button class="ctrl-btn play-btn" @click="togglePlay">
-          {{ isPlaying ? '⏸' : '▶' }}
-        </button>
-        <button class="ctrl-btn" @click="nextTrack">⏭</button>
-      </div>
-      <div class="player-right" @click.stop>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          v-model="volume"
-          @input="updateVolume"
-          class="volume-slider"
+  <div class="music-player" :class="{ 'is-expanded': isExpanded }">
+    <div class="music-player__shell" @click="toggleExpand">
+      <div class="music-player__cover-wrap">
+        <img
+          class="music-player__cover"
+          :src="currentTrack.cover"
+          :alt="currentTrack.alt"
         />
-        <span class="vol-icon">{{ volume > 0 ? '🔊' : '🔇' }}</span>
+        <div class="music-player__cover-overlay"></div>
+        <span class="music-player__badge">{{ isPlaying ? 'Playing' : 'Ready' }}</span>
+      </div>
+
+      <div class="music-player__content">
+        <div class="music-player__meta">
+          <p class="music-player__eyebrow">Now playing</p>
+          <h3>{{ currentTrack.name }}</h3>
+          <p class="music-player__artist">{{ currentTrack.artist }}</p>
+        </div>
+
+        <div class="music-player__controls" @click.stop>
+          <button class="icon-btn" type="button" aria-label="Shuffle music" @click="shuffleTrack">
+            <span class="material-symbols-outlined music-player__material-icon" aria-hidden="true">
+              shuffle
+            </span>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Previous track" @click="prevTrack">
+            <svg class="music-player__transport-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 6v12l-8.5-6.07V18h-2V6h2v6.07L19 6z"></path>
+            </svg>
+          </button>
+          <button
+            class="icon-btn icon-btn--primary"
+            type="button"
+            :aria-label="isPlaying ? 'Pause music' : 'Play music'"
+            @click="togglePlay"
+          >
+            <svg v-if="isPlaying" class="music-player__transport-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 6h3v12H7V6zm7 0h3v12h-3V6z"></path>
+            </svg>
+            <svg v-else class="music-player__transport-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 5v14l11-7L8 5z"></path>
+            </svg>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Next track" @click="nextTrack">
+            <svg class="music-player__transport-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 18V6l8.5 6.07V6h2v12h-2v-6.07L5 18z"></path>
+            </svg>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Restart song" @click="restartTrack">
+            <svg class="music-player__transport-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5a7 7 0 1 1-6.93 6H3l3.5-3.5L10 11H7.91A5 5 0 1 0 12 7v2l4-3-4-3v2z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="music-player__progress" v-if="isExpanded" @click.stop>
+          <div class="music-player__progress-track">
+            <div class="music-player__progress-fill" :style="{ width: progress + '%' }"></div>
+          </div>
+          <div class="music-player__time-row">
+            <span>{{ currentTime }}</span>
+            <span>{{ duration }}</span>
+          </div>
+        </div>
+
+        <div class="music-player__extras" v-if="isExpanded" @click.stop>
+          <div class="music-player__volume-row">
+            <label for="music-volume">Volume</label>
+            <input
+              id="music-volume"
+              v-model="volume"
+              class="music-player__volume"
+              type="range"
+              min="0"
+              max="100"
+            />
+            <span>{{ volume }}%</span>
+          </div>
+
+          <div class="music-player__tracklist">
+            <button
+              v-for="(track, index) in tracks"
+              :key="track.name"
+              type="button"
+              class="music-player__track"
+              :class="{ 'is-active': currentIndex === index }"
+              @click="selectTrack(index)"
+            >
+              <span class="music-player__track-index">{{ formatIndex(index) }}</span>
+              <span class="music-player__track-text">
+                <strong>{{ track.name }}</strong>
+                <small>{{ track.artist }}</small>
+              </span>
+              <span v-if="currentIndex === index && isPlaying" class="music-player__track-state">
+                ▶
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="progress-bar" v-if="isExpanded">
-      <div class="progress-track">
-        <div class="progress-fill" :style="{ width: progress + '%' }"></div>
-      </div>
-      <div class="time-row">
-        <span>{{ currentTime }}</span>
-        <span>{{ duration }}</span>
-      </div>
-    </div>
-
-    <div class="tracklist" v-if="isExpanded">
-      <div
-        v-for="(track, index) in tracks"
-        :key="index"
-        class="track-item"
-        :class="{ active: currentIndex === index }"
-        @click="selectTrack(index)"
-      >
-        <span class="track-num">{{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}</span>
-        <span class="track-item-name">{{ track.name }}</span>
-        <span class="track-item-artist">{{ track.artist }}</span>
-        <span class="track-playing" v-if="currentIndex === index && isPlaying">▶</span>
-      </div>
-    </div>
+    <audio
+      ref="audio"
+      @timeupdate="onTimeUpdate"
+      @ended="nextTrack"
+      @loadedmetadata="onLoadedMetadata"
+    ></audio>
   </div>
-
-  <audio ref="audio" @timeupdate="onTimeUpdate" @ended="nextTrack" @loadedmetadata="onLoadedMetadata"></audio>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import profileImage from '@/assets/profile.jpg'
+import herTrack from '@/assets/audio/JVKE - her (official lyric video).mp3'
+import sagipTrack from '@/assets/audio/Sagip - Jan Roberts (Lyric Visualizer).mp3'
+import theManWhoCanTBeMovedTrack from '@/assets/audio/The Script - The Man Who Can’t Be Moved (Official Video).mp3'
 
-interface Track {
+type Track = {
   name: string
   artist: string
   url: string
+  cover: string
+  alt: string
 }
 
 const tracks: Track[] = [
   {
-    name: 'Lofi Study',
-    artist: 'Chillhop Music',
-    url: 'https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3'
+    name: 'Her',
+    artist: 'JVKE',
+    url: herTrack,
+    cover: profileImage,
+    alt: 'her by JVKE album cover'
   },
   {
-    name: 'Late Night Coding',
-    artist: 'Lo-fi Beats',
-    url: 'https://cdn.pixabay.com/audio/2022/10/25/audio_946b0939a5.mp3'
+    name: 'Sagip',
+    artist: 'Jan Roberts',
+    url: sagipTrack,
+    cover: profileImage,
+    alt: 'Sagip by Jan Roberts album cover'
   },
   {
-    name: 'Chill Vibes',
-    artist: 'Ambient Mix',
-    url: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3'
+    name: 'The Man Who Can’t Be Moved',
+    artist: 'The Script',
+    url: theManWhoCanTBeMovedTrack,
+    cover: profileImage,
+    alt: 'The Man Who Can’t Be Moved by The Script album cover'
   }
 ]
+
+const fallbackTrack: Track = tracks[0] ?? {
+  name: 'Her',
+  artist: 'JVKE',
+  url: '',
+  cover: profileImage,
+  alt: 'her by JVKE album cover'
+}
 
 const audio = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
@@ -95,299 +166,448 @@ const progress = ref(0)
 const currentTime = ref('0:00')
 const duration = ref('0:00')
 
-const currentTrack = computed(() => tracks[currentIndex.value])
+const currentTrack = computed<Track>(() => tracks[currentIndex.value] ?? fallbackTrack)
 
 const formatTime = (seconds: number): string => {
-  const m = Math.floor(seconds / 60)
-  const s = Math.floor(seconds % 60)
-  return `${m}:${s < 10 ? '0' + s : s}`
+  const safeSeconds = Number.isFinite(seconds) ? seconds : 0
+  const minutes = Math.floor(safeSeconds / 60)
+  const remainingSeconds = Math.floor(safeSeconds % 60)
+  return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
 }
 
+const formatIndex = (index: number): string => String(index + 1).padStart(2, '0')
+
 const loadTrack = () => {
-  if (audio.value && currentTrack.value) {
-    audio.value.src = currentTrack.value.url
-    audio.value.load()
-    if (isPlaying.value) audio.value.play()
+  if (!audio.value || !currentTrack.value) {
+    return
+  }
+
+  audio.value.src = currentTrack.value.url
+  audio.value.load()
+  audio.value.volume = volume.value / 100
+
+  if (isPlaying.value) {
+    audio.value.play().catch(() => {
+      isPlaying.value = false
+    })
   }
 }
 
 const togglePlay = () => {
-  if (!audio.value) return
+  if (!audio.value) {
+    return
+  }
+
   if (isPlaying.value) {
     audio.value.pause()
     isPlaying.value = false
-  } else {
-    audio.value.play()
-    isPlaying.value = true
+    return
   }
+
+  audio.value
+    .play()
+    .then(() => {
+      isPlaying.value = true
+    })
+    .catch(() => {
+      isPlaying.value = false
+    })
 }
 
 const nextTrack = () => {
   currentIndex.value = (currentIndex.value + 1) % tracks.length
+  isPlaying.value = true
   loadTrack()
+}
+
+const shuffleTrack = () => {
+  if (tracks.length <= 1) {
+    return
+  }
+
+  let nextIndex = currentIndex.value
+
+  while (nextIndex === currentIndex.value) {
+    nextIndex = Math.floor(Math.random() * tracks.length)
+  }
+
+  currentIndex.value = nextIndex
+  isPlaying.value = true
+  loadTrack()
+}
+
+const restartTrack = () => {
+  if (!audio.value) {
+    return
+  }
+
+  audio.value.currentTime = 0
+  progress.value = 0
+  currentTime.value = '0:00'
+
+  if (!isPlaying.value) {
+    audio.value.play().then(() => {
+      isPlaying.value = true
+    }).catch(() => {
+      isPlaying.value = false
+    })
+  }
 }
 
 const prevTrack = () => {
   currentIndex.value = (currentIndex.value - 1 + tracks.length) % tracks.length
+  isPlaying.value = true
   loadTrack()
 }
 
-const selectTrack = (index: number) => {
+const selectTrack = (index: number): void => {
   currentIndex.value = index
   isPlaying.value = true
   loadTrack()
 }
 
 const updateVolume = () => {
-  if (audio.value) audio.value.volume = volume.value / 100
-}
-
-const onTimeUpdate = () => {
   if (audio.value) {
-    progress.value = (audio.value.currentTime / audio.value.duration) * 100 || 0
-    currentTime.value = formatTime(audio.value.currentTime)
+    audio.value.volume = volume.value / 100
   }
 }
 
+const onTimeUpdate = () => {
+  if (!audio.value) {
+    return
+  }
+
+  progress.value = audio.value.duration ? (audio.value.currentTime / audio.value.duration) * 100 : 0
+  currentTime.value = formatTime(audio.value.currentTime)
+}
+
 const onLoadedMetadata = () => {
-  if (audio.value) duration.value = formatTime(audio.value.duration)
+  if (audio.value) {
+    duration.value = formatTime(audio.value.duration)
+  }
 }
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
 }
 
-onMounted(() => {
-  if (audio.value) {
-    audio.value.volume = volume.value / 100
-    if (currentTrack.value) audio.value.src = currentTrack.value.url
-  }
-})
+watch(volume, updateVolume)
+watch(currentIndex, loadTrack)
 
-watch(currentIndex, () => loadTrack())
+onMounted(() => {
+  if (!audio.value) {
+    return
+  }
+
+  audio.value.volume = volume.value / 100
+  loadTrack()
+})
 </script>
 
 <style scoped>
-.player {
+.music-player {
   position: fixed;
-  bottom: 24px;
   right: 24px;
-  width: min(320px, calc(100vw - 32px));
-  background: rgba(13, 13, 20, 0.95);
-  border: 0.5px solid rgba(0,245,196,0.3);
-  border-radius: 12px;
+  bottom: 24px;
   z-index: 1000;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  width: min(420px, calc(100vw - 32px));
 }
 
-.player-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
+.music-player__shell {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 209, 102, 0.16), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(92, 225, 230, 0.14), transparent 36%),
+    linear-gradient(145deg, rgba(10, 13, 24, 0.96), rgba(15, 20, 34, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
   cursor: pointer;
-  gap: 12px;
+  color: #f5f7fb;
 }
 
-.player-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.vinyl {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: conic-gradient(#00f5c4, #7c3aed, #0a0a0f, #00f5c4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.vinyl.spinning {
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.vinyl-inner {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #0a0a0f;
-  border: 2px solid rgba(0,245,196,0.5);
-}
-
-.track-info {
-  min-width: 0;
-  flex: 1;
-}
-
-.track-name {
-  font-family: 'Space Mono', monospace;
-  font-size: 11px;
-  color: #e8e8f0;
-  white-space: nowrap;
+.music-player__cover-wrap {
+  position: relative;
+  min-height: 110px;
+  border-radius: 20px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.22), rgba(92, 225, 230, 0.16));
 }
 
-.track-artist {
-  font-size: 10px;
-  color: #666680;
-  margin-top: 2px;
+.music-player__cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 1;
 }
 
-.player-controls {
+.music-player__cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9, 12, 21, 0) 20%, rgba(9, 12, 21, 0.36) 100%);
+}
+
+.music-player__badge {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(9, 12, 21, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.music-player__content {
+  min-width: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.music-player__meta {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
 }
 
-.ctrl-btn {
-  background: transparent;
-  border: none;
-  color: #666680;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 4px 6px;
-  transition: color 0.2s;
+.music-player__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245, 247, 251, 0.7);
 }
 
-.ctrl-btn:hover { color: #00f5c4; }
-
-.play-btn {
-  color: #00f5c4;
-  font-size: 14px;
+.music-player__meta h3 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
-.player-right {
+.music-player__artist {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(245, 247, 251, 0.72);
+}
+
+.music-player__controls {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f5f7fb;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.music-player__transport-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  display: block;
+}
+
+.music-player__material-icon {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  font-size: 18px;
+  line-height: 1;
+  display: block;
+}
+
+.icon-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.icon-btn--primary {
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: linear-gradient(135deg, #ffd166, #5ce1e6);
+  color: #0f1320;
+  box-shadow: 0 12px 24px rgba(92, 225, 230, 0.2);
+  font-size: 18px;
+}
+
+.music-player__progress {
+  display: flex;
+  flex-direction: column;
   gap: 6px;
 }
 
-.volume-slider {
-  width: 50px;
-  accent-color: #00f5c4;
-}
-
-.vol-icon {
-  font-size: 12px;
-}
-
-.progress-bar {
-  padding: 0 16px 8px;
-}
-
-.progress-track {
-  height: 2px;
-  background: #1a1a24;
-  border-radius: 2px;
+.music-player__progress-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.progress-fill {
+.music-player__progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00f5c4, #7c3aed);
-  transition: width 0.5s linear;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffd166, #5ce1e6);
+  transition: width 0.2s linear;
 }
 
-.time-row {
+.music-player__time-row {
   display: flex;
   justify-content: space-between;
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  color: #666680;
-  margin-top: 4px;
+  font-size: 11px;
+  color: rgba(245, 247, 251, 0.64);
 }
 
-.tracklist {
-  border-top: 0.5px solid rgba(255,255,255,0.07);
-  max-height: 160px;
-  overflow-y: auto;
-}
-
-.track-item {
+.music-player__extras {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.music-player__volume-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  font-size: 12px;
+  color: rgba(245, 247, 251, 0.82);
+}
+
+.music-player__volume {
+  width: 100%;
+  accent-color: #5ce1e6;
+}
+
+.music-player__tracklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.music-player__track {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
   cursor: pointer;
-  transition: background 0.2s;
-  border-bottom: 0.5px solid rgba(255,255,255,0.03);
+  text-align: left;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.track-item:hover {
-  background: rgba(0,245,196,0.05);
+.music-player__track:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
-.track-item.active {
-  background: rgba(0,245,196,0.08);
+.music-player__track.is-active {
+  background: rgba(92, 225, 230, 0.1);
+  border-color: rgba(92, 225, 230, 0.28);
 }
 
-.track-num {
-  font-family: 'Space Mono', monospace;
-  font-size: 9px;
-  color: #666680;
-  min-width: 16px;
+.music-player__track-index {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(245, 247, 251, 0.52);
 }
 
-.track-item-name {
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  color: #e8e8f0;
-  flex: 1;
+.music-player__track-text {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.music-player__track-text strong,
+.music-player__track-text small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.track-item-artist {
-  font-size: 10px;
-  color: #666680;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.music-player__track-text strong {
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.track-playing {
-  font-size: 8px;
-  color: #00f5c4;
+.music-player__track-text small {
+  font-size: 11px;
+  color: rgba(245, 247, 251, 0.64);
+}
+
+.music-player__track-state {
+  font-size: 11px;
+  color: #5ce1e6;
 }
 
 @media (max-width: 560px) {
-  .player {
+  .music-player {
     right: 16px;
     bottom: 16px;
+    width: calc(100vw - 32px);
   }
 
-  .player-bar {
-    align-items: flex-start;
-    flex-wrap: wrap;
+  .music-player__shell {
+    grid-template-columns: 1fr;
   }
 
-  .player-left {
-    flex-basis: 100%;
+  .music-player__cover-wrap {
+    min-height: 0;
+    aspect-ratio: 1;
   }
 
-  .player-controls {
-    order: 2;
-  }
-
-  .player-right {
-    order: 3;
-    margin-left: auto;
+  .music-player__controls {
+    justify-content: flex-start;
   }
 }
 </style>
