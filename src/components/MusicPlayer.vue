@@ -113,9 +113,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import profileImage from '@/assets/profile.jpg'
-import herTrack from '@/assets/audio/JVKE - her (official lyric video).mp3'
-import sagipTrack from '@/assets/audio/Sagip - Jan Roberts (Lyric Visualizer).mp3'
-import theManWhoCanTBeMovedTrack from '@/assets/audio/The Script - The Man Who Can’t Be Moved (Official Video).mp3'
+import BetterEveryDayTrack from '@/assets/audio/Better Every Day.mp3'
+import KeepMovingForwardTrack from '@/assets/audio/Keep Moving Forward.mp3'
+import MidnightCommitTrack from '@/assets/audio/Midnight Commit.mp3'
 
 type Track = {
   name: string
@@ -127,25 +127,25 @@ type Track = {
 
 const tracks: Track[] = [
   {
-    name: 'Her',
-    artist: 'JVKE',
-    url: herTrack,
+    name: 'Better Every Day',
+    artist: 'J&K Studio',
+    url: BetterEveryDayTrack,
     cover: profileImage,
-    alt: 'her by JVKE album cover'
+    alt: 'Better Every Day by J&K Studio '
   },
   {
-    name: 'Sagip',
-    artist: 'Jan Roberts',
-    url: sagipTrack,
+    name: 'Keep Moving Forward',
+    artist: 'J&K Studio',
+    url: KeepMovingForwardTrack,
     cover: profileImage,
-    alt: 'Sagip by Jan Roberts album cover'
+    alt: 'Keep Moving Forward by J&K Studio'
   },
   {
-    name: 'The Man Who Can’t Be Moved',
-    artist: 'The Script',
-    url: theManWhoCanTBeMovedTrack,
+    name: 'Midnight Commit',
+    artist: 'J&K Studio',
+    url: MidnightCommitTrack,
     cover: profileImage,
-    alt: 'The Man Who Can’t Be Moved by The Script album cover'
+    alt: 'Midnight Commit by J&K Studio'
   }
 ]
 
