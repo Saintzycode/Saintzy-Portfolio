@@ -16,6 +16,7 @@ let mouseY = 0
 let ringX = 0
 let ringY = 0
 let animationId: number
+let cursorEnabled = false
 
 const onMouseMove = (e: MouseEvent) => {
   mouseX = e.clientX
@@ -64,6 +65,9 @@ const animateRing = () => {
 }
 
 onMounted(() => {
+  cursorEnabled = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  if (!cursorEnabled) return
+
   document.addEventListener('mousemove', onMouseMove)
   animateRing()
 
@@ -79,6 +83,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  if (!cursorEnabled) return
+
   document.removeEventListener('mousemove', onMouseMove)
   cancelAnimationFrame(animationId)
   document.body.style.cursor = 'default'
@@ -108,5 +114,12 @@ onUnmounted(() => {
   z-index: 9998;
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
 }
 </style>

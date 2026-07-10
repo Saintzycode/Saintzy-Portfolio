@@ -1,0 +1,8 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="420" rx="28" fill="#111118"/>
+  <rect x="32" y="32" width="576" height="356" rx="22" fill="#14141E" stroke="#7C3AED" stroke-opacity=".45"/>
+  <path d="M216 94H424L404 302L320 326L236 302L216 94Z" fill="#00F5C4"/>
+  <path d="M320 122H390L378 280L320 296V122Z" fill="#7C3AED"/>
+  <text x="270" y="236" fill="#0A0A0F" font-family="monospace" font-size="58" font-weight="700">CSS</text>
+  <text x="58" y="360" fill="#E8E8F0" font-family="monospace" font-size="24">CSS BADGE</text>
+</svg>

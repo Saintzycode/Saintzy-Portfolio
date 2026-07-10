@@ -129,7 +129,7 @@ const handleSubmit = (): void => {
 <style scoped>
 .contact {
   background: transparent;
-  padding: 64px 40px;
+  padding: clamp(48px, 8vw, 64px) clamp(16px, 5vw, 40px);
   border-bottom: 0.5px solid rgba(255,255,255,0.07);
 }
 
@@ -143,17 +143,17 @@ const handleSubmit = (): void => {
 }
 
 .section-title {
-  font-size: 28px;
+  font-size: clamp(24px, 5vw, 28px);
   font-weight: 800;
   margin-bottom: 32px;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
   color: #e8e8f0;
 }
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 48px);
   align-items: start;
 }
 
@@ -179,6 +179,7 @@ const handleSubmit = (): void => {
   background: #14141e;
   text-decoration: none;
   transition: border-color 0.2s;
+  min-width: 0;
 }
 
 .contact-link:hover {
@@ -209,6 +210,7 @@ const handleSubmit = (): void => {
 .link-value {
   font-size: 13px;
   color: #e8e8f0;
+  overflow-wrap: anywhere;
 }
 
 .link-arrow {
@@ -248,6 +250,7 @@ const handleSubmit = (): void => {
   outline: none;
   transition: border-color 0.2s;
   resize: none;
+  width: 100%;
 }
 
 .form-group input:focus,
@@ -288,8 +291,9 @@ const handleSubmit = (): void => {
 }
 
 .footer {
-  padding: 20px 40px;
+  padding: 20px clamp(16px, 5vw, 40px);
   display: flex;
+  gap: 16px;
   justify-content: space-between;
   align-items: center;
   background: #111118;
@@ -344,5 +348,34 @@ const handleSubmit = (): void => {
 .slide-right.revealed {
   opacity: 1;
   transform: translateX(0);
+}
+
+@media (max-width: 820px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .contact-link {
+    align-items: flex-start;
+  }
+
+  .link-arrow {
+    display: none;
+  }
+
+  .btn-submit {
+    width: 100%;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer-text {
+    line-height: 1.7;
+  }
 }
 </style>

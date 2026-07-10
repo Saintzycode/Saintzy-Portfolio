@@ -65,11 +65,11 @@ const downloadCV = () => {
 <style scoped>
 .hero {
   background: transparent;
-  padding: 64px 40px 0;
+  padding: clamp(40px, 8vw, 64px) clamp(16px, 5vw, 40px) 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
   grid-template-rows: auto auto;
-  gap: 40px;
+  gap: clamp(32px, 6vw, 56px);
   align-items: center;
   position: relative;
   border-bottom: 0.5px solid rgba(255,255,255,0.07);
@@ -108,12 +108,13 @@ const downloadCV = () => {
 }
 
 .hero-title {
-  font-size: 52px;
+  font-size: clamp(40px, 7vw, 52px);
   font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   margin-bottom: 20px;
   color: #e8e8f0;
+  overflow-wrap: anywhere;
 }
 
 .hero-title span {
@@ -124,12 +125,13 @@ const downloadCV = () => {
   font-size: 14px;
   color: #666680;
   line-height: 1.7;
-  max-width: 380px;
+  max-width: 42rem;
   margin-bottom: 32px;
 }
 
 .hero-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -172,21 +174,22 @@ const downloadCV = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: clamp(8px, 4vw, 40px);
+  min-width: 0;
 }
 
 .avatar-wrapper {
   position: relative;
-  width: 280px;
-  height: 340px;
+  width: min(280px, 74vw);
+  aspect-ratio: 14 / 17;
 }
 
 .card-main {
   position: absolute;
   top: 0;
   left: 0;
-  width: 280px;
-  height: 340px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   border: 1px solid rgba(0,245,196,0.4);
   z-index: 3;
@@ -201,8 +204,8 @@ const downloadCV = () => {
   position: absolute;
   top: 12px;
   left: 12px;
-  width: 280px;
-  height: 340px;
+  width: 100%;
+  height: 100%;
   background: #7c3aed;
   z-index: 2;
   transition: transform 0.3s ease;
@@ -216,8 +219,8 @@ const downloadCV = () => {
   position: absolute;
   top: 22px;
   left: 22px;
-  width: 280px;
-  height: 340px;
+  width: 100%;
+  height: 100%;
   background: #00f5c4;
   opacity: 0.15;
   z-index: 1;
@@ -313,8 +316,9 @@ const downloadCV = () => {
 }
 .stats-row {
   grid-column: 1 / -1;
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
   padding: 20px 0;
   border-top: 0.5px solid rgba(255,255,255,0.07);
 }
@@ -322,7 +326,9 @@ const downloadCV = () => {
 .stat {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .stat + .stat {
@@ -448,6 +454,70 @@ const downloadCV = () => {
   89% {
     transform: translate(0);
     opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-left {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .hero-tag,
+  .hero-btns {
+    justify-content: center;
+  }
+
+  .hero-desc {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    gap: 28px;
+  }
+
+  .hero-title {
+    font-size: clamp(34px, 12vw, 44px);
+  }
+
+  .hero-btns {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 18px;
+  }
+
+  .stat {
+    flex-direction: column;
+    gap: 4px;
+    padding-inline: 10px;
+  }
+
+  .stat + .stat {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .stat:nth-child(odd) {
+    border-right: 0.5px solid rgba(255,255,255,0.07);
+  }
+
+  .stat-label {
+    text-align: center;
   }
 }
 </style>

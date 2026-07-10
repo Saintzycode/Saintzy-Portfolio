@@ -208,11 +208,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
   backdrop-filter: blur(4px);
 }
 
 .secret-terminal {
-  width: 640px;
+  width: min(640px, 100%);
   max-height: 80vh;
   background: #0d0d14;
   border: 0.5px solid rgba(0,245,196,0.4);
@@ -267,7 +268,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 .close-btn:hover { color: #00f5c4; }
 
 .terminal-body {
-  padding: 20px;
+  padding: clamp(14px, 4vw, 20px);
   overflow-y: auto;
   flex: 1;
   display: flex;
@@ -317,6 +318,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
   font-family: 'Space Mono', monospace;
   font-size: 12px;
   flex: 1;
+  min-width: 0;
   caret-color: #00f5c4;
 }
 
@@ -387,5 +389,36 @@ onUnmounted(() => window.removeEventListener('keydown', onKeyDown))
 @keyframes flicker {
   from { opacity: 0.7; }
   to { opacity: 1; }
+}
+
+@media (max-width: 560px) {
+  .terminal-title {
+    text-align: left;
+  }
+
+  .welcome-line,
+  .cmd-text,
+  .terminal-input,
+  .output-line,
+  .cmd-name,
+  .cmd-desc {
+    font-size: 10px;
+  }
+
+  .output-grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .skill-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .bar {
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
 }
 </style>

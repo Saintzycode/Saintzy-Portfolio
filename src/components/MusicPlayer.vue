@@ -172,7 +172,7 @@ watch(currentIndex, () => loadTrack())
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 320px;
+  width: min(320px, calc(100vw - 32px));
   background: rgba(13, 13, 20, 0.95);
   border: 0.5px solid rgba(0,245,196,0.3);
   border-radius: 12px;
@@ -229,6 +229,7 @@ watch(currentIndex, () => loadTrack())
 
 .track-info {
   min-width: 0;
+  flex: 1;
 }
 
 .track-name {
@@ -346,15 +347,47 @@ watch(currentIndex, () => loadTrack())
   font-size: 10px;
   color: #e8e8f0;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .track-item-artist {
   font-size: 10px;
   color: #666680;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .track-playing {
   font-size: 8px;
   color: #00f5c4;
+}
+
+@media (max-width: 560px) {
+  .player {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .player-bar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .player-left {
+    flex-basis: 100%;
+  }
+
+  .player-controls {
+    order: 2;
+  }
+
+  .player-right {
+    order: 3;
+    margin-left: auto;
+  }
 }
 </style>

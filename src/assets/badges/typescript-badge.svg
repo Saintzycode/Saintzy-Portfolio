@@ -1,0 +1,7 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="420" rx="28" fill="#111118"/>
+  <rect x="32" y="32" width="576" height="356" rx="22" fill="#14141E" stroke="#00F5C4" stroke-opacity=".35"/>
+  <rect x="210" y="100" width="220" height="220" rx="24" fill="#7C3AED"/>
+  <text x="252" y="244" fill="#FFFFFF" font-family="monospace" font-size="84" font-weight="700">TS</text>
+  <text x="58" y="360" fill="#E8E8F0" font-family="monospace" font-size="24">TYPESCRIPT BADGE</text>
+</svg>

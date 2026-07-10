@@ -63,7 +63,7 @@ const { revealed, elementRef } = useScrollReveal()
 <style scoped>
 .skills {
   background: transparent;
-  padding: 64px 40px;
+  padding: clamp(48px, 8vw, 64px) clamp(16px, 5vw, 40px);
   border-bottom: 0.5px solid rgba(255,255,255,0.07);
 }
 
@@ -77,16 +77,16 @@ const { revealed, elementRef } = useScrollReveal()
 }
 
 .section-title {
-  font-size: 28px;
+  font-size: clamp(24px, 5vw, 28px);
   font-weight: 800;
   margin-bottom: 32px;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
   color: #e8e8f0;
 }
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
   margin-bottom: 48px;
 }
@@ -101,12 +101,14 @@ const { revealed, elementRef } = useScrollReveal()
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
 }
 
 .skill-name {
   font-size: 13px;
   color: #e8e8f0;
   letter-spacing: 0.5px;
+  min-width: 0;
 }
 
 .skill-pct {
@@ -186,5 +188,21 @@ const { revealed, elementRef } = useScrollReveal()
 .skill-revealed {
   opacity: 1;
   transform: translateX(0);
+}
+
+@media (max-width: 700px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .tools-list {
+    gap: 8px;
+  }
+
+  .tool-badge {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
 }
 </style>

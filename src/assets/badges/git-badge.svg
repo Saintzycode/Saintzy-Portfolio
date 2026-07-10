@@ -1,0 +1,11 @@
+<svg width="640" height="420" viewBox="0 0 640 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="420" rx="28" fill="#111118"/>
+  <rect x="32" y="32" width="576" height="356" rx="22" fill="#14141E" stroke="#7C3AED" stroke-opacity=".45"/>
+  <path d="M320 84L446 210L320 336L194 210L320 84Z" fill="#7C3AED"/>
+  <path d="M272 162L338 228" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M338 228L374 192" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="272" cy="162" r="18" fill="#00F5C4"/>
+  <circle cx="338" cy="228" r="18" fill="#00F5C4"/>
+  <circle cx="374" cy="192" r="18" fill="#00F5C4"/>
+  <text x="58" y="360" fill="#E8E8F0" font-family="monospace" font-size="24">GIT BADGE</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#0B0B11"/>
+  <rect x="72" y="70" width="1056" height="620" rx="24" fill="#14141E" stroke="#00F5C4" stroke-opacity=".35"/>
+  <rect x="112" y="112" width="976" height="70" rx="14" fill="#0F0F17"/>
+  <circle cx="148" cy="147" r="9" fill="#FF5F57"/>
+  <circle cx="178" cy="147" r="9" fill="#FEBC2E"/>
+  <circle cx="208" cy="147" r="9" fill="#28C840"/>
+  <rect x="112" y="228" width="360" height="360" rx="28" fill="#00F5C4" fill-opacity=".1"/>
+  <path d="M292 294L404 518H180L292 294Z" fill="#00F5C4"/>
+  <path d="M292 360L352 480H232L292 360Z" fill="#14141E"/>
+  <rect x="536" y="258" width="384" height="34" rx="8" fill="#E8E8F0"/>
+  <rect x="536" y="318" width="500" height="18" rx="9" fill="#666680"/>
+  <rect x="536" y="354" width="420" height="18" rx="9" fill="#666680"/>
+  <rect x="536" y="430" width="148" height="46" rx="8" fill="#00F5C4"/>
+  <rect x="710" y="430" width="148" height="46" rx="8" fill="#7C3AED"/>
+  <text x="112" y="646" fill="#00F5C4" font-family="monospace" font-size="28" letter-spacing="8">ATOM CSS</text>
+</svg>

@@ -184,6 +184,7 @@ const handleEnter = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
   transition: opacity 0.8s ease;
 }
 
@@ -202,7 +203,7 @@ const handleEnter = () => {
 }
 
 .terminal {
-  width: 600px;
+  width: min(600px, 100%);
   background: rgba(13,13,20,0.85);
   border: 0.5px solid rgba(0,245,196,0.3);
   border-radius: 8px;
@@ -244,7 +245,7 @@ const handleEnter = () => {
 }
 
 .terminal-body {
-  padding: 24px;
+  padding: clamp(16px, 5vw, 24px);
   min-height: 300px;
   display: flex;
   flex-direction: column;
@@ -259,6 +260,8 @@ const handleEnter = () => {
   align-items: center;
   gap: 4px;
   animation: fadeInLine 0.2s ease;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 @keyframes fadeInLine {
@@ -312,5 +315,23 @@ const handleEnter = () => {
 
 .btn-cursor {
   animation: blink 1s step-end infinite;
+}
+
+@media (max-width: 520px) {
+  .terminal-body {
+    min-height: 260px;
+  }
+
+  .terminal-line {
+    font-size: 11px;
+  }
+
+  .enter-btn {
+    width: 100%;
+    justify-content: center;
+    padding-inline: 16px;
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
 }
 </style>

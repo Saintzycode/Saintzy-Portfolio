@@ -1,0 +1,18 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#0A0A0F"/>
+  <rect x="70" y="64" width="1060" height="632" rx="22" fill="#14141E" stroke="#7C3AED" stroke-opacity=".45"/>
+  <rect x="116" y="118" width="260" height="524" rx="16" fill="#0F0F17"/>
+  <rect x="416" y="118" width="668" height="118" rx="16" fill="#101018"/>
+  <rect x="416" y="266" width="668" height="376" rx="16" fill="#0F0F17"/>
+  <rect x="454" y="156" width="250" height="24" rx="8" fill="#E8E8F0"/>
+  <rect x="454" y="192" width="420" height="16" rx="8" fill="#666680"/>
+  <rect x="154" y="160" width="184" height="18" rx="9" fill="#00F5C4"/>
+  <rect x="154" y="222" width="132" height="14" rx="7" fill="#666680"/>
+  <rect x="154" y="266" width="172" height="14" rx="7" fill="#666680"/>
+  <rect x="154" y="310" width="112" height="14" rx="7" fill="#666680"/>
+  <text x="454" y="342" fill="#00F5C4" font-family="monospace" font-size="26">const snippet = vault.find("vue")</text>
+  <text x="454" y="398" fill="#7C3AED" font-family="monospace" font-size="26">copy(snippet.code)</text>
+  <text x="454" y="454" fill="#E8E8F0" font-family="monospace" font-size="26">ship faster</text>
+  <rect x="454" y="548" width="160" height="44" rx="8" fill="#00F5C4"/>
+  <text x="116" y="670" fill="#7C3AED" font-family="monospace" font-size="28" letter-spacing="6">SNIPPETVAULT</text>
+</svg>

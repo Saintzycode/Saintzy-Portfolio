@@ -25,11 +25,11 @@ const scrollTo = (section: string) => {
 
 <style scoped>
 .nav {
-   
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 40px;
+  gap: 24px;
+  padding: 18px clamp(16px, 5vw, 40px);
   border-bottom: 0.5px solid rgba(255,255,255,0.07);
   background: rgba(10,10,15,0.7);
   backdrop-filter: blur(10px);
@@ -43,19 +43,25 @@ const scrollTo = (section: string) => {
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  min-width: 0;
 }
 
 .logo span {
   font-family: 'Space Mono', monospace;
-  font-size: 13px;
+  font-size: clamp(11px, 2vw, 13px);
   color: #00f5c4;
   letter-spacing: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-links {
   display: flex;
-  gap: 28px;
+  justify-content: flex-end;
+  gap: clamp(12px, 2.5vw, 28px);
   list-style: none;
+  flex-wrap: wrap;
 }
 
 .nav-links li {
@@ -69,5 +75,39 @@ const scrollTo = (section: string) => {
 
 .nav-links li:hover {
   color: #00f5c4;
+}
+
+@media (max-width: 820px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-block: 14px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    row-gap: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo :deep(svg) {
+    width: 44px;
+    height: 44px;
+  }
+
+  .logo span {
+    max-width: calc(100vw - 96px);
+  }
+
+  .nav-links {
+    gap: 8px 14px;
+  }
+
+  .nav-links li {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
 }
 </style>

@@ -1,0 +1,18 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#0A0A0F"/>
+  <rect x="426" y="54" width="348" height="652" rx="42" fill="#14141E" stroke="#00F5C4" stroke-opacity=".4"/>
+  <rect x="462" y="104" width="276" height="552" rx="28" fill="#0F0F17"/>
+  <rect x="498" y="150" width="204" height="26" rx="13" fill="#E8E8F0"/>
+  <rect x="498" y="214" width="204" height="104" rx="18" fill="#00F5C4"/>
+  <text x="526" y="276" fill="#0A0A0F" font-family="monospace" font-size="34" font-weight="700">P12,450</text>
+  <rect x="498" y="354" width="204" height="54" rx="14" fill="#191927"/>
+  <rect x="498" y="430" width="204" height="54" rx="14" fill="#191927"/>
+  <rect x="498" y="506" width="204" height="54" rx="14" fill="#191927"/>
+  <circle cx="526" cy="381" r="9" fill="#7C3AED"/>
+  <circle cx="526" cy="457" r="9" fill="#00F5C4"/>
+  <circle cx="526" cy="533" r="9" fill="#FEBC2E"/>
+  <rect x="552" y="374" width="112" height="12" rx="6" fill="#666680"/>
+  <rect x="552" y="450" width="128" height="12" rx="6" fill="#666680"/>
+  <rect x="552" y="526" width="96" height="12" rx="6" fill="#666680"/>
+  <text x="80" y="650" fill="#00F5C4" font-family="monospace" font-size="28" letter-spacing="6">BUDGETKO</text>
+</svg>
