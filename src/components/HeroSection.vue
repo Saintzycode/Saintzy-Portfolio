@@ -22,7 +22,7 @@
     <div class="card-bg-2"></div>
     <div class="card-bg-1"></div>
     <div class="card-main">
-      <img src="@/assets/Main Profile.jpg" alt="John Kenneth Reside" class="profile-img" />
+      <img src="@/assets/Kenneth.png" alt="John Kenneth Reside" class="profile-img" />
       <div class="card-badge">
         <span class="badge-dot"></span>
         Available for work

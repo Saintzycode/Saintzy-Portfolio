@@ -2,43 +2,34 @@
   <section id="achievements" class="achievements" ref="elementRef">
     <div class="section-label" :class="{ revealed: revealed }">// 04 — Achievements</div>
     <h2 class="section-title" :class="{ revealed: revealed }">Certifications & Badges</h2>
-    <div class="carousel-controls" :class="{ revealed: revealed }">
-      <button type="button" class="carousel-btn" aria-label="Previous certification" @click="scrollBadges(-1)">
-        Prev
-      </button>
-      <button type="button" class="carousel-btn" aria-label="Next certification" @click="scrollBadges(1)">
-        Next
-      </button>
-    </div>
 
-    <div
-      class="badges-grid"
-      ref="badgesCarousel"
-      @focusin="pauseBadgeAutoSlide"
-      @focusout="resumeBadgeAutoSlide"
+    <n-carousel
+      effect="card"
+      prev-slide-style="transform: translateX(-150%) translateZ(-800px);"
+      next-slide-style="transform: translateX(50%) translateZ(-800px);"
+      :show-dots="false"
+      :autoplay="true"
+      :loop="true"
+      class="badges-carousel"
     >
-      <div
-        v-for="(badge, index) in carouselBadges"
-        :key="`${badge.id}-${index}`"
-        class="badge-card badge-hidden"
-        :class="{ 'badge-revealed': revealed }"
-        :style="{ transitionDelay: `${index * 0.1}s` }"
-      >
-        <div class="badge-art">
-          <img :src="badge.image" :alt="`${badge.title} badge`" />
-        </div>
-        <div class="badge-info">
-          <div class="badge-meta">
-            <span class="badge-date">{{ badge.date }}</span>
-            <span class="badge-tag" :style="{ borderColor: badge.color, color: badge.color }">
-              {{ badge.category }}
-            </span>
+      <n-carousel-item v-for="(badge, index) in badges" :key="`${badge.id}-${index}`" :style="{ width: '60%' }">
+        <div class="badge-card">
+          <div class="badge-art">
+            <img :src="badge.image" :alt="`${badge.title} badge`" />
           </div>
-          <div class="badge-title">{{ badge.title }}</div>
-          <div class="badge-issuer">{{ badge.issuer }}</div>
+          <div class="badge-info">
+            <div class="badge-meta">
+              <span class="badge-date">{{ badge.date }}</span>
+              <span class="badge-tag" :style="{ borderColor: badge.color, color: badge.color }">
+                {{ badge.category }}
+              </span>
+            </div>
+            <div class="badge-title">{{ badge.title }}</div>
+            <div class="badge-issuer">{{ badge.issuer }}</div>
+          </div>
         </div>
-      </div>
-    </div>
+      </n-carousel-item>
+    </n-carousel>
 
     <div class="stats-badges" :class="{ revealed: revealed }">
       <div class="stat-badge" v-for="stat in stats" :key="stat.label">
@@ -50,7 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { NCarousel, NCarouselItem } from 'naive-ui'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import cssBadge from '@/assets/badges/ccna-introduction-to-networks.png'
 import frontendBadge from '@/assets/badges/frontend-badge.svg'
@@ -146,97 +138,6 @@ const stats: Stat[] = [
 ]
 
 const { revealed, elementRef } = useScrollReveal()
-const badgesCarousel = ref<HTMLElement | null>(null)
-const carouselBadges = computed(() => [...badges, ...badges])
-let badgeAutoSlide: number | undefined
-let badgeButtonAnimation: number | undefined
-let lastBadgeFrame = 0
-let badgeScrollPosition = 0
-
-const scrollBadges = (direction: number) => {
-  const carousel = badgesCarousel.value
-  if (!carousel) return
-  pauseBadgeAutoSlide()
-
-  const card = carousel.querySelector<HTMLElement>('.badge-card')
-  const distance = card ? card.offsetWidth + 18 : carousel.clientWidth
-  const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth
-  if (maxScrollLeft <= 2) return
-
-  let target = carousel.scrollLeft + direction * distance
-  if (direction > 0 && carousel.scrollLeft >= maxScrollLeft - 4) {
-    target = 0
-  }
-
-  if (direction < 0 && carousel.scrollLeft <= 4) {
-    target = maxScrollLeft
-  }
-
-  animateBadgesTo(Math.max(0, Math.min(target, maxScrollLeft)))
-}
-
-const animateBadgesTo = (target: number) => {
-  const carousel = badgesCarousel.value
-  if (!carousel) return
-
-  const start = carousel.scrollLeft
-  const distance = target - start
-  const duration = 520
-  const startTime = performance.now()
-
-  const step = (timestamp: number) => {
-    const progress = Math.min((timestamp - startTime) / duration, 1)
-    const eased = 1 - Math.pow(1 - progress, 3)
-    badgeScrollPosition = start + distance * eased
-    carousel.scrollLeft = badgeScrollPosition
-
-    if (progress < 1) {
-      badgeButtonAnimation = window.requestAnimationFrame(step)
-      return
-    }
-
-    badgeButtonAnimation = undefined
-    resumeBadgeAutoSlide()
-  }
-
-  badgeButtonAnimation = window.requestAnimationFrame(step)
-}
-
-const pauseBadgeAutoSlide = () => {
-  if (badgeAutoSlide) window.cancelAnimationFrame(badgeAutoSlide)
-  if (badgeButtonAnimation) window.cancelAnimationFrame(badgeButtonAnimation)
-  badgeAutoSlide = undefined
-  badgeButtonAnimation = undefined
-  lastBadgeFrame = 0
-}
-
-const animateBadges = (timestamp: number) => {
-  const carousel = badgesCarousel.value
-  if (carousel) {
-    const halfWidth = carousel.scrollWidth / 2
-    const delta = lastBadgeFrame ? timestamp - lastBadgeFrame : 0
-    if (!lastBadgeFrame) badgeScrollPosition = carousel.scrollLeft
-    badgeScrollPosition += delta * 0.05
-
-    if (badgeScrollPosition >= halfWidth) {
-      badgeScrollPosition -= halfWidth
-    }
-
-    carousel.scrollLeft = badgeScrollPosition
-  }
-
-  lastBadgeFrame = timestamp
-  badgeAutoSlide = window.requestAnimationFrame(animateBadges)
-}
-
-const resumeBadgeAutoSlide = () => {
-  pauseBadgeAutoSlide()
-  badgeScrollPosition = badgesCarousel.value?.scrollLeft ?? 0
-  badgeAutoSlide = window.requestAnimationFrame(animateBadges)
-}
-
-onMounted(resumeBadgeAutoSlide)
-onUnmounted(pauseBadgeAutoSlide)
 </script>
 
 <style scoped>
@@ -268,88 +169,32 @@ onUnmounted(pauseBadgeAutoSlide)
   transition: opacity 0.6s ease, transform 0.6s ease 0.1s;
 }
 
-.carousel-controls {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin: -48px 0 24px auto;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease 0.15s;
-}
-
-.carousel-controls.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.carousel-btn {
-  background: #14141e;
-  border: 0.5px solid rgba(255,255,255,0.1);
-  color: #e8e8f0;
-  cursor: pointer;
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1px;
-  min-width: 56px;
-  padding: 9px 12px;
-  text-transform: uppercase;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.carousel-btn:hover {
-  border-color: #00f5c4;
-  color: #00f5c4;
-}
-
 .section-label.revealed,
 .section-title.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-.badges-grid {
-  display: flex;
-  gap: 18px;
-  margin: 0 -6px 38px;
-  overflow-x: auto;
-  padding: 6px 6px 14px;
-  scroll-behavior: auto;
-  scrollbar-width: none;
-  will-change: scroll-position;
-}
-
-.badges-grid::-webkit-scrollbar {
-  display: none;
+.badges-carousel {
+  height: 280px;
+  margin: 0 0 38px;
 }
 
 .badge-card {
   background: #14141e;
   border: 0.5px solid rgba(255,255,255,0.07);
   display: flex;
-  flex: 0 0 min(360px, calc(100vw - 52px));
   flex-direction: column;
   position: relative;
   overflow: hidden;
   transition: border-color 0.2s, transform 0.2s;
   cursor: default;
   min-width: 0;
+  height: 100%;
 }
 
 .badge-card:hover {
   border-color: rgba(0,245,196,0.3);
-  transform: translateY(-3px);
-}
-
-.badge-hidden {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.badge-revealed {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .badge-art {
@@ -463,25 +308,9 @@ onUnmounted(pauseBadgeAutoSlide)
   text-transform: uppercase;
 }
 
-@media (max-width: 980px) {
-  .badge-card {
-    flex-basis: min(340px, calc(100vw - 52px));
-  }
-}
-
 @media (max-width: 700px) {
   .stats-badges {
     grid-template-columns: 1fr;
-  }
-
-  .carousel-controls {
-    justify-content: flex-start;
-    margin: 0 0 20px;
-  }
-
-  .badge-card {
-    flex-basis: calc(100vw - 44px);
-    min-height: auto;
   }
 
   .stat-badge {
